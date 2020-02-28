@@ -9,7 +9,7 @@ PyTorch implementation for image quality assessment in the [LIVE dataset](https:
 As mentioned before the LIVE dataset is used composed of 1162 images. Download the data and convert its labels to a .txt file with the following structure:
 ```
 imgName, imgMOS, imgStd
-´´´
+```
 This will be later used for generating a the necessary vectors for the groundtruth.
 
 #### Loss Function
