@@ -7,6 +7,7 @@ from utils import helper_functions as hf
 from model import models, classifier
 from utils import data_loader as dl
 from pipeline import run_session, evaluate
+import numpy as np
 import os, sys
 import logging
 import torch
@@ -44,12 +45,12 @@ for runId in range(0,params["runsNumber"]):
     logging.info("####################################################################")
     # Set folder for current run
     params["modelDir"] = os.path.join(params["mainModelDir"], "run_"+str(runId+1))
-    randState = 8#int(np.random.rand(1)*10*(runId+1))
+    randState= int(np.random.rand(1)*10*(runId+1))
     logging.info("Random state set to "+str(randState))
 
     # Data splitting for training, validation and testing
-    trainVal, testPaths = train_test_split(imgsList, test_size=0.2, random_state=1, shuffle=True)
-    trainPaths, valPaths = train_test_split(trainVal, test_size=0.2, random_state=1, shuffle=True)
+    trainVal, testPaths = train_test_split(imgsList, test_size=0.2, random_state=randState, shuffle=True)
+    trainPaths, valPaths = train_test_split(trainVal, test_size=0.2, random_state=randState, shuffle=True)
 
     logging.info("Data for Testing: {}".format(str(testPaths)))
     logging.info("Data for Validation: {}".format(str(valPaths)))
