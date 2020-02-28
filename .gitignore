@@ -1,0 +1,24 @@
+# use glob syntax.
+syntax: glob
+
+**/__pycache__
+*.txt
+*.pyc
+**/experiments
+**/images
+*.png
+*.csv
+*.xlsx
+*.log
+*.pdf
+*.pt
+*.hg
+experiments/
+experimentsOld/
+./vscode
+**./vscode
+**.vscode
+data/
+**/.ipynb_checkpoints
+*.json
+*.pkl
