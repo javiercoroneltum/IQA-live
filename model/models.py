@@ -56,6 +56,21 @@ class DenseNet(nn.Module):
         return out
 
 
+class MobileNet(nn.Module):
+
+    def __init__(self):
+        super(MobileNet, self).__init__()
+        self.mobilenet = models.mobilenet_v2(pretrained=True)
+        self.mobilenet.classifier = nn.Sequential(nn.Linear(1280, 10))
+        self.mobilenet.act = nn.Sigmoid()
+
+    def forward(self, US):
+        out = self.mobilenet(US)
+        out = self.mobilenet.act(out)
+        
+        return out
+
+
 def get_architecture(params):
     architecture = params["architecture"]
 
@@ -66,6 +81,10 @@ def get_architecture(params):
     if architecture == 'DenseNet':
         logging.info('Using ' + architecture + ' as architecture')
         return DenseNet
+
+    if architecture == 'MobileNet':
+        logging.info('Using ' + architecture + ' as architecture')
+        return MobileNet
 
     if architecture == 'ResNet':
         logging.info('Using ' + architecture + ' as architecture')
