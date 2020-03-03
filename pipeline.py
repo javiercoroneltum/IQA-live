@@ -104,7 +104,8 @@ def evaluate(model, lossFn, dataLoader, params, epoch=-1):
     if epoch == -1:#True:#epoch == (params["numEpochs"]-1):#params["bestAUC"] < metrics['AUC']:#
         if(os.path.isdir(params['modelDir'])==False): os.makedirs(params['modelDir'])
         #logging.info("Generating and saving validation")
-        # hf.generate_figures(paths, labels, probs, params, validationFigures=True)
+        hf.generate_figures(mosTrue, mosPred, params)
+        logging.info("Test: Spearman:{:05.4f}, Pearson:{:05.4f}".format(metrics["spearman"][0], metrics["pearson"][0]))
         with open(os.path.join(params['modelDir'], 'TestOutputs.log'), 'w') as (file_handler):
             file_handler.write(('{}\n').format(('\n').join(map(str, sorted(metrics['results'])))))  
 

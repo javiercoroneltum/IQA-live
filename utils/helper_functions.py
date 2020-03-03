@@ -1,6 +1,10 @@
+from sklearn.metrics import confusion_matrix
 from tensorboardX import SummaryWriter
+import matplotlib.pyplot as plt
 import scipy
+import itertools
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')
 import logging
 import os, sys
 import re
@@ -55,7 +59,7 @@ def all_outputs(paths, probs, mosPred, mosTrue):
 
     results = []
     for item in range(0,len(paths)):
-        results.append([paths[item], probs[item+1], mosPred[item], mosTrue[item]])
+        results.append([paths[item], np.array(np.around(probs[item+1],2)), np.around(mosPred[item],2), np.around(mosTrue[item],2)])
 
     return results
 
@@ -135,3 +139,40 @@ def get_name(params):
     folderName = os.path.join(folderName, runNumber)
 
     return folderName
+
+
+def generate_figures(labels, probs, params):
+    """ Generate a pdf with the confusion matrices """
+
+    cnfMx =  plt.figure(figsize=(10, 10))
+    
+    ax1 = cnfMx.add_subplot(1,2,1)
+    get_confusion_matrix(labels, probs, params, norm=True)
+    ax1.set_ylim(len([1,2,3,4,5,6,7,8,9,10])-0.5, -0.5); plt.tight_layout()
+    
+    ax2 = cnfMx.add_subplot(1,2,2)
+    get_confusion_matrix(labels, probs, params)
+    ax2.set_ylim(len([1,2,3,4,5,6,7,8,9,10])-0.5, -0.5); plt.tight_layout()
+
+    cnfMx.savefig(params["modelDir"] + "_confusion.pdf")
+
+def get_confusion_matrix(labels, probs, params, norm=False):
+    """ Obtain a confusion matrix """
+
+    labels = np.rint(labels); outputs = np.rint(probs)
+
+    cm = confusion_matrix(labels, outputs, labels=[1,2,3,4,5,6,7,8,9,10])
+    fmt = '.0f'
+    if norm:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        cm[np.isnan(cm)] = 0
+        fmt = '.2f'
+
+    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    tick_marks = np.arange(len([1,2,3,4,5,6,7,8,9,10]))
+    plt.xticks(tick_marks, [1,2,3,4,5,6,7,8,9,10], rotation=0); plt.yticks(tick_marks, [1,2,3,4,5,6,7,8,9,10])
+    
+    thresh = cm.max() / 2
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt), horizontalalignment="center", verticalalignment="center", color="white" if cm[i, j] > thresh else "black")
+    plt.ylabel('True label');  plt.xlabel('Predicted label'); plt.title("Confusion Matrix")
