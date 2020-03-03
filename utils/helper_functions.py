@@ -41,8 +41,7 @@ def get_paths_if_study(pathsList, studiesList):
 
 
 def get_metrics(paths, probs, mosPred, mosTrue, params, train=False):
-    """ Produce the metrics given the outputs of the network
-    """
+    """ Produce the metrics given the outputs of the network """
     metrics = {}
     metrics["spearman"] = scipy.stats.pearsonr(mosTrue, mosPred)
     metrics["pearson"] = scipy.stats.spearmanr(mosTrue, mosPred)
@@ -52,11 +51,9 @@ def get_metrics(paths, probs, mosPred, mosTrue, params, train=False):
 
 
 def all_outputs(paths, probs, mosPred, mosTrue):
-    """ Given the cumulative outputs of the network for validation
-        return the path of the image with the results with structure:
-        path, raw output, softmax(output), classification
+    """ Given the cumulative outputs of the network for test, return the path of the image with the results with structure:
+        imgName, probs, predMOS, trueMOS
     """
-
     results = []
     for item in range(0,len(paths)):
         results.append([paths[item], np.array(np.around(probs[item+1],2)), np.around(mosPred[item],2), np.around(mosTrue[item],2)])
@@ -65,8 +62,7 @@ def all_outputs(paths, probs, mosPred, mosTrue):
 
 
 def set_logger(log_path):
-    """Set the logger to log info in terminal and file`log_path.
-    """
+    """ Set the logger to log info in terminal and file`log_path """
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
@@ -125,9 +121,7 @@ def tensorboard_logger(modelDir, *args, **kwargs):
 
 
 def get_name(params):
-    """ Generate the name given to the folder/experiment where to save the results.
-        Takes into account the given parameters for the run
-    """
+    """ Generate the name given to the folder/experiment where to save the results """
 
     folderDescription = params["runName"] + "/" + params['architecture'] + '_B'+str(params['batchSize']) + \
                 '_lr' + str(str(format(params['lr'], ".1e"))) + \

@@ -30,7 +30,7 @@ class basicDataset(Dataset):
         [mu, sigma] = scoresDict[imgName]
         y = stats.truncnorm.rvs((0 - mu) / sigma, (100 - mu) / sigma, loc=mu, scale=sigma, size=100).round().astype(int)
         scoreHist = np.histogram(y/10, bins=[1,2,3,4,5,6,7,8,9,10,11])[0]
-        normScoreHist =  scoreHist/scoreHist.sum()
+        normScoreHist =  np.around(scoreHist,3)/scoreHist.sum()
         score = torch.tensor(normScoreHist)
 
         # Load image
