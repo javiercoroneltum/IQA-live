@@ -114,17 +114,9 @@ def tensorboard_logger(modelDir, *args, **kwargs):
     if(os.path.isdir(modelDir)==False):
         os.makedirs(modelDir)
     writer = SummaryWriter(modelDir) # this is a folder
-    if(epoch > 0):
-        writer.add_scalars('Loss', {'Training': kwargs['trainLoss'],
-                                    'Validation': kwargs['valLoss']}, epoch)
-        writer.add_scalars('Accuracy', {'Training': kwargs['trainAcc'],
-                                        'Validation': kwargs['valAcc']}, epoch)
-        writer.add_scalars('AUC', {'Training': kwargs['trainAuc'],
-                                    'Validation': kwargs['valAuc']}, epoch)
-    else:
-        writer.add_scalar('Testing/Precision', kwargs['aggregated_test_PnR']['precision'], epoch_id)
-        writer.add_scalar('Testing/Recall', kwargs['aggregated_test_PnR']['recall'], epoch_id)
-        writer.add_scalar('Testing/DiscreteDICE', kwargs['aggregated_test_PnR']['discreteDICE'], epoch_id)
+    writer.add_scalars('Loss', {'Training': kwargs['trainLoss'], 'Validation': kwargs['valLoss']}, epoch)
+    writer.add_scalars('Correlation', {'Spearman': kwargs['valSpearman'], 'Pearson': kwargs['valPearson']}, epoch)
+    
     writer.close()
 
 

@@ -23,9 +23,8 @@ def run_session(model, trainData, valData, optimizer, lossFn, params):
             scheduler.step(valLoss, epoch)
             logging.info("Epoch {}: TrainLoss:{:05.4f}, ValLoss:{:05.4f}, spearman:{:05.4f}, pearson:{:05.4f}".format(epoch, trainLoss, valLoss, metrics["spearman"][0], metrics["pearson"][0]))
 
-            #hf.tensorboard_logger(params['modelDir'], epoch=epoch, trainLoss=trainLoss,  valLoss=valLoss,
-            #                                        trainAcc=metricsTrain['Accuracy'], valAcc=metricsVal['Accuracy'],
-            #                                        trainAuc=metricsTrain['AUC'], valAuc=metricsVal['AUC'])
+            hf.tensorboard_logger(params['modelDir'], epoch=epoch, trainLoss=trainLoss,  valLoss=valLoss,
+                                                    valPearson=metrics['pearson'][0], valSpearman=metrics['spearman'][0])
 
             # Chech if save the model based on AUC value or last epoch
             if epoch == (params["numEpochs"]-1):#
