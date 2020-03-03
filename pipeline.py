@@ -11,7 +11,8 @@ def run_session(model, trainData, valData, optimizer, lossFn, params):
     """ Performs training and validation using a learning rate scheduler. """
 
     # Reduce on Plateau Learning Rate Scheduler
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=8, verbose=True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=6, verbose=True)
+    corr = 0
 
     with tqdm(total=params['numEpochs'], ascii=True) as (t):
         for epoch in range(params['numEpochs']):
@@ -21,13 +22,14 @@ def run_session(model, trainData, valData, optimizer, lossFn, params):
             valLoss, metrics = evaluate(model, lossFn, valData, params, epoch)
             
             scheduler.step(valLoss, epoch)
-            logging.info("Epoch {}: TrainLoss:{:05.4f}, ValLoss:{:05.4f}, spearman:{:05.4f}, pearson:{:05.4f}".format(epoch, trainLoss, valLoss, metrics["spearman"][0], metrics["pearson"][0]))
+            logging.info("Epoch {}: TrainLoss:{:05.4f}, ValLoss:{:05.4f}, Spearman:{:05.4f}, Pearson:{:05.4f}".format(epoch, trainLoss, valLoss, metrics["spearman"][0], metrics["pearson"][0]))
 
             hf.tensorboard_logger(params['modelDir'], epoch=epoch, trainLoss=trainLoss,  valLoss=valLoss,
                                                     valPearson=metrics['pearson'][0], valSpearman=metrics['spearman'][0])
 
-            # Chech if save the model based on AUC value or last epoch
-            if epoch == (params["numEpochs"]-1):#
+            # Chech if save the model based on correlation value
+            if corr < (metrics["spearman"][0]+metrics["pearson"][0])/2:#
+                corr = (metrics["spearman"][0]+metrics["pearson"][0])/2
                 torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(),
                             'optimizer_state_dict': optimizer.state_dict()}, 
                             params['modelDir']+'.pt')
