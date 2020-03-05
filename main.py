@@ -77,7 +77,7 @@ for runId in range(0,params["runsNumber"]):
     model = model().cuda() # Move to gpu
     optimizer = classifier.get_optimizer(model, params)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    loss = classifier.EMDLoss().to(device)
+    loss = classifier.CombinedLoss(weights=[2,0.5]).to(device)
     
     # Train the model
     logging.info("Starting training for {} epoch(s)".format(params["numEpochs"]))

@@ -23,6 +23,41 @@ class EMDLoss(nn.Module):
         return sampleEMD.mean()
 
 
+class MSELoss(nn.Module):
+    """ Defines the Mean Squared Error Loss """
+
+    def __init__(self):
+        super(MSELoss, self).__init__()
+        self.lossFunction = nn.MSELoss(reduction='mean')
+
+    def forward(self, pTarget: torch.Tensor, pEstimate: torch.Tensor):
+        assert pTarget.shape == pEstimate.shape
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        output = (pEstimate*torch.tensor([1,2,3,4,5,6,7,8,9,10]).float().to(device)).sum(dim=1)
+        true = (pTarget*torch.tensor([1,2,3,4,5,6,7,8,9,10]).float().to(device)).sum(dim=1)
+        lossValue = self.lossFunction(true, output)
+
+        return lossValue
+
+
+class CombinedLoss(nn.Module):
+    """ Combines EMD and MSE as a single loss function, weighting can be modified as additional parameter"""
+
+    def __init__(self, weights=[1,1]):
+        super(CombinedLoss, self).__init__()
+        self.MSELoss = MSELoss()
+        self.EMDLoss = EMDLoss()
+        self.weights = weights
+
+    def forward(self, pTarget: torch.Tensor, pEstimate: torch.Tensor):
+        assert pTarget.shape == pEstimate.shape
+        MSEValue = 1 + (torch.log(self.MSELoss(pTarget,pEstimate))/2)
+        EMDValue = self.EMDLoss(pTarget,pEstimate)
+        lossValue = (self.weights[0]*EMDValue) + (self.weights[1]*MSEValue)
+        
+        return lossValue
+
+
 def get_optimizer(model, params):
     """ Defines the optimizer to use during the training procedure """
 
