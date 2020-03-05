@@ -9,6 +9,8 @@ def __init__(self, net, params):
 
 
 class EMDLoss(nn.Module):
+    """ Defines the Earth Mover's Distance loss as in NIMA """
+
     def __init__(self):
         super(EMDLoss, self).__init__()
 

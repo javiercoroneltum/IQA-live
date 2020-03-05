@@ -68,7 +68,7 @@ for runId in range(0,params["runsNumber"]):
     validationLoader = torch.utils.data.DataLoader(validationSet, batch_size=params["batchSize"], shuffle=True, num_workers=0)
 
     # Load test data
-    logging.info("Using {} images for training".format(len(testPaths)))
+    logging.info("Using {} images for test".format(len(testPaths)))
     testSet = dl.basicDataset(testPaths, scoresDicts, params, val=True)
     testLoader = torch.utils.data.DataLoader(testSet, batch_size=params["batchSize"], shuffle=True, num_workers=0)
 

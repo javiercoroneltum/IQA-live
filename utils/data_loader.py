@@ -8,9 +8,8 @@ import torch
 
 
 class basicDataset(Dataset):
-    """ Dataset generator for training with given parameters.
-
-    """
+    """ Dataset generator for training with given parameters """
+    
     def __init__(self, imgPaths, scoresDict, params, val=False):
         """Initialization"""
         self.imgPaths = imgPaths
@@ -26,7 +25,6 @@ class basicDataset(Dataset):
         
         # For label
         imgName = imgPath[imgPath.find("Images")+7:]
-        #print(imgName)
         [mu, sigma] = scoresDict[imgName]
         y = stats.truncnorm.rvs((0 - mu) / sigma, (100 - mu) / sigma, loc=mu, scale=sigma, size=100).round().astype(int)
         scoreHist = np.histogram(y/10, bins=[1,2,3,4,5,6,7,8,9,10,11])[0]

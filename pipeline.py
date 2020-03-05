@@ -8,7 +8,7 @@ import time
 
 
 def run_session(model, trainData, valData, optimizer, lossFn, params):
-    """ Performs training and validation using a learning rate scheduler. """
+    """ Performs training and validation using a learning rate scheduler """
 
     # Reduce on Plateau Learning Rate Scheduler
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=6, verbose=True)
@@ -40,8 +40,7 @@ def run_session(model, trainData, valData, optimizer, lossFn, params):
 
 
 def train(model, optimizer, lossFn, dataLoader, params):
-    """ Computes a training step for one epoch (one full pass over the training set). 
-    """
+    """ Computes a training step for one epoch (one full pass over the training set) """
     
     model.train()
     lossValue = hf.RunningAverage()
@@ -67,8 +66,7 @@ def train(model, optimizer, lossFn, dataLoader, params):
 
 
 def evaluate(model, lossFn, dataLoader, params, epoch=-1):
-    """ Computes validation for one epoch (one full pass over the validation set). 
-    """
+    """ Computes validation for one epoch (one full pass over the validation set) """
 
     # Set model to evaluation mode
     model.eval()
@@ -103,12 +101,11 @@ def evaluate(model, lossFn, dataLoader, params, epoch=-1):
 
     metrics = hf.get_metrics(paths, probs, mosPred, mosTrue, params)
     
-    if epoch == -1:#True:#epoch == (params["numEpochs"]-1):#params["bestAUC"] < metrics['AUC']:#
+    if epoch == -1:
         if(os.path.isdir(params['modelDir'])==False): os.makedirs(params['modelDir'])
-        #logging.info("Generating and saving validation")
         hf.generate_figures(mosTrue, mosPred, params)
-        logging.info("Test: Spearman:{:05.4f}, Pearson:{:05.4f}".format(metrics["spearman"][0], metrics["pearson"][0]))
         with open(os.path.join(params['modelDir'], 'TestOutputs.log'), 'w') as (file_handler):
             file_handler.write(('{}\n').format(('\n').join(map(str, sorted(metrics['results'])))))  
-
+        logging.info("Test: Spearman:{:05.4f}, Pearson:{:05.4f}".format(metrics["spearman"][0], metrics["pearson"][0]))
+    
     return lossValue.avg, metrics    
