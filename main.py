@@ -84,15 +84,15 @@ for runId in range(0,params["runsNumber"]):
     run_session(model, trainLoader, validationLoader, optimizer, loss, params)
 
     # Test the model
-    metrics = evaluate(model, loss, testLoader, params, -1)
-    
-    # Update the metrics
-    # logging.info("Accuracy: {}".format(metrics["Accuracy"]))
+    checkpoint = torch.load(params['modelDir']+'.pt')
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    evaluate(model, loss, testLoader, params, -1)
     
     logging.info("Run " + str(runId+1) + " done")
 
     # Clear variables and gpu
-    del model, optimizer, loss, trainLoader, validationLoader, testLoader, metrics
+    del model, optimizer, loss, trainLoader, validationLoader, testLoader
     torch.cuda.empty_cache()
 
 logging.info("####################################################################")

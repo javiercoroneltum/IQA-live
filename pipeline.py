@@ -29,14 +29,14 @@ def run_session(model, trainData, valData, optimizer, lossFn, params):
 
             # Chech if save the model based on correlation value
             if corr < (metrics["spearman"][0]+metrics["pearson"][0])/2:#
+                epochSaved = epoch
                 corr = (metrics["spearman"][0]+metrics["pearson"][0])/2
                 torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(),
                             'optimizer_state_dict': optimizer.state_dict()}, 
                             params['modelDir']+'.pt')
 
             t.update(1)
-    print('\n')
-    return #metricsVal
+    logging.info("Model Saved in epoch {}, starting with test".format(epochSaved))
 
 
 def train(model, optimizer, lossFn, dataLoader, params):
