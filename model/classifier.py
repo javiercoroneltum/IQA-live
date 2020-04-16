@@ -34,10 +34,7 @@ class MSELoss(nn.Module):
 
     def forward(self, pTarget: torch.Tensor, pEstimate: torch.Tensor):
         assert pTarget.shape == pEstimate.shape
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        output = (pEstimate*torch.tensor([1,2,3,4,5,6,7,8,9,10]).float().to(device)).sum(dim=1)
-        true = (pTarget*torch.tensor([1,2,3,4,5,6,7,8,9,10]).float().to(device)).sum(dim=1)
-        lossValue = self.lossFunction(true, output)
+        lossValue = self.lossFunction(pTarget.float(), pEstimate.float())
 
         return lossValue
 
@@ -53,7 +50,7 @@ class CombinedLoss(nn.Module):
 
     def forward(self, pTarget: torch.Tensor, pEstimate: torch.Tensor):
         assert pTarget.shape == pEstimate.shape
-        MSEValue = 1 + (torch.log(self.MSELoss(pTarget,pEstimate))/2)
+        MSEValue = self.MSELoss(pTarget,pEstimate)
         EMDValue = self.EMDLoss(pTarget,pEstimate)
         lossValue = (self.weights[0]*EMDValue) + (self.weights[1]*MSEValue)
         
